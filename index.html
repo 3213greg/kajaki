@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>zWIEPRZaj – Wypożyczalnia Kajaków Trawniki</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      color: #1a1a1a;
+      background: #f0f7f4;
+    }
+
+    /* HERO */
+    header {
+      background: linear-gradient(135deg, #0a4f3c 0%, #1a8a5a 60%, #2ec47a 100%);
+      color: white;
+      text-align: center;
+      padding: 80px 20px 60px;
+      position: relative;
+      overflow: hidden;
+    }
+    header::before {
+      content: '';
+      position: absolute;
+      bottom: -2px; left: 0; right: 0;
+      height: 60px;
+      background: #f0f7f4;
+      clip-path: ellipse(55% 100% at 50% 100%);
+    }
+    header .logo {
+      font-size: 3.2rem;
+      font-weight: 900;
+      letter-spacing: 2px;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    }
+    header .logo span { color: #a8f0c8; }
+    header .tagline {
+      font-size: 1.15rem;
+      margin-top: 10px;
+      opacity: 0.9;
+      font-style: italic;
+    }
+    header .cta-btn {
+      display: inline-block;
+      margin-top: 30px;
+      background: white;
+      color: #0a4f3c;
+      font-weight: 700;
+      font-size: 1rem;
+      padding: 14px 36px;
+      border-radius: 50px;
+      text-decoration: none;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    header .cta-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.25); }
+
+    /* SECTIONS */
+    section { padding: 60px 20px; max-width: 960px; margin: 0 auto; }
+
+    h2 {
+      font-size: 1.9rem;
+      color: #0a4f3c;
+      margin-bottom: 24px;
+      position: relative;
+      display: inline-block;
+    }
+    h2::after {
+      content: '';
+      display: block;
+      height: 4px;
+      width: 60px;
+      background: #2ec47a;
+      border-radius: 2px;
+      margin-top: 6px;
+    }
+
+    /* O NAS */
+    .about-text {
+      font-size: 1.05rem;
+      line-height: 1.8;
+      color: #333;
+      background: white;
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+    }
+
+    /* OFERTA */
+    .offer-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px;
+      margin-top: 10px;
+    }
+    .offer-card {
+      background: white;
+      border-radius: 16px;
+      padding: 28px 22px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+      border-top: 4px solid #2ec47a;
+      text-align: center;
+    }
+    .offer-card .icon { font-size: 2.4rem; margin-bottom: 12px; }
+    .offer-card h3 { font-size: 1rem; color: #0a4f3c; font-weight: 700; margin-bottom: 6px; }
+    .offer-card p { font-size: 0.9rem; color: #555; line-height: 1.5; }
+
+    /* TRASY */
+    .routes { background: white; border-radius: 16px; padding: 30px; box-shadow: 0 2px 12px rgba(0,0,0,0.07); }
+    .route-item {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 14px 0;
+      border-bottom: 1px solid #e8f5ee;
+    }
+    .route-item:last-child { border-bottom: none; }
+    .route-dot {
+      width: 12px; height: 12px;
+      background: #2ec47a;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .route-name { font-weight: 700; color: #0a4f3c; font-size: 1rem; }
+    .route-time { margin-left: auto; font-size: 0.88rem; color: #777; white-space: nowrap; }
+
+    .routes-note {
+      margin-top: 20px;
+      font-size: 0.92rem;
+      color: #555;
+      background: #e8f5ee;
+      padding: 14px 18px;
+      border-radius: 10px;
+      line-height: 1.6;
+    }
+
+    /* KONTAKT */
+    #kontakt { background: #0a4f3c; border-radius: 24px; color: white; text-align: center; padding: 60px 30px; max-width: 960px; margin: 0 auto 60px; }
+    #kontakt h2 { color: white; }
+    #kontakt h2::after { background: #2ec47a; }
+    .contact-phone {
+      font-size: 2.2rem;
+      font-weight: 900;
+      color: #a8f0c8;
+      margin: 20px 0 8px;
+      letter-spacing: 1px;
+    }
+    .contact-phone a { color: inherit; text-decoration: none; }
+    .contact-address { font-size: 1rem; opacity: 0.85; margin-bottom: 30px; }
+    .contact-note {
+      font-size: 1rem;
+      opacity: 0.8;
+      font-style: italic;
+      max-width: 500px;
+      margin: 0 auto;
+      line-height: 1.7;
+    }
+
+    footer {
+      text-align: center;
+      padding: 20px;
+      font-size: 0.82rem;
+      color: #888;
+    }
+
+    @media (max-width: 600px) {
+      header .logo { font-size: 2.2rem; }
+      .contact-phone { font-size: 1.7rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- HERO -->
+<header>
+  <div class="logo">z<span>WIEPRZAJ</span></div>
+  <div class="tagline">Wypożyczalnia Kajaków · Trawniki nad Wieprzem</div>
+  <a href="tel:791518867" class="cta-btn">📞 Zadzwoń i zarezerwuj</a>
+</header>
+
+<!-- O NAS -->
+<section id="o-nas">
+  <h2>O nas</h2>
+  <div class="about-text">
+    Nad Wieprzem się wychowaliśmy – w wodzie i na wodzie spędziliśmy całe dzieciństwo i lata nastoletnie.
+    Rzekę znamy świetnie, ale niezmiennie urzeka nas swoim pięknem i dzikością.
+    Jesteśmy grupą zajawkowiczów, których łączy pasja do kajaków.<br /><br />
+    Zapraszamy do naszej wypożyczalni w <strong>Trawnikach (Trawniki 6)</strong>.
+    Oferujemy indywidualne podejście do każdego klienta – masz pomysł? <strong>Dzwoń!</strong>
+  </div>
+</section>
+
+<!-- OFERTA -->
+<section id="oferta">
+  <h2>Oferta</h2>
+  <div class="offer-grid">
+    <div class="offer-card">
+      <div class="icon">🛶</div>
+      <h3>Kajak 2-osobowy</h3>
+      <p>Z możliwością dostawki siedziska dla dziecka</p>
+    </div>
+    <div class="offer-card">
+      <div class="icon">🚣</div>
+      <h3>Kajak 1-osobowy</h3>
+      <p>Dla tych, którzy lubią płynąć własnym tempem</p>
+    </div>
+    <div class="offer-card">
+      <div class="icon">🚐</div>
+      <h3>Transport</h3>
+      <p>Dowóz kajaków na miejsce startu + odbiór po spływie. Pomoc w transporcie uczestników.</p>
+    </div>
+    <div class="offer-card">
+      <div class="icon">🦺</div>
+      <h3>Sprzęt asekuracyjny</h3>
+      <p>Kamizelki asekuracyjne (kapoki) dla każdego uczestnika</p>
+    </div>
+    <div class="offer-card">
+      <div class="icon">📱</div>
+      <h3>Etui na telefon</h3>
+      <p>Ochronne etui wodoodporne – telefon bezpieczny na wodzie</p>
+    </div>
+    <div class="offer-card">
+      <div class="icon">🛢️</div>
+      <h3>Beczki wodoszczelne</h3>
+      <p>Do bezpiecznego spakowania wartościowych rzeczy</p>
+    </div>
+  </div>
+</section>
+
+<!-- TRASY -->
+<section id="trasy">
+  <h2>Trasy spływów</h2>
+  <div class="routes">
+    <div class="route-item">
+      <div class="route-dot"></div>
+      <div class="route-name">Dobryniów → Trawniki</div>
+      <div class="route-time">⏱ 4–5 godz.</div>
+    </div>
+    <div class="route-item">
+      <div class="route-dot"></div>
+      <div class="route-name">Trawniki → Pełczyn</div>
+      <div class="route-time">⏱ 1–1,5 godz.</div>
+    </div>
+    <div class="route-item">
+      <div class="route-dot"></div>
+      <div class="route-name">Trawniki → Siostrzytów</div>
+      <div class="route-time">⏱ 2–3 godz.</div>
+    </div>
+    <div class="route-item">
+      <div class="route-dot"></div>
+      <div class="route-name">Trawniki → Jaszczów</div>
+      <div class="route-time">⏱ 4–5 godz.</div>
+    </div>
+    <div class="route-item">
+      <div class="route-dot"></div>
+      <div class="route-name">Dobryniów → Oleśniki → Trawniki → Siostrzytów → Jaszczów</div>
+      <div class="route-time">⏱ trasa główna</div>
+    </div>
+  </div>
+  <div class="routes-note">
+    ⚠️ Czas spływu zależy od prędkości, wytrenowania i ilości przerw 😉<br />
+    Masz inne pomysły? Inne trasy? Spływ kilkudniowy? Wypożyczenie przyczepki z kajakami?
+    <strong>Pisz, dzwoń – jesteśmy otwarci na propozycje!</strong>
+  </div>
+</section>
+
+<!-- KONTAKT -->
+<section id="kontakt">
+  <h2>Kontakt</h2>
+  <div class="contact-phone"><a href="tel:791518867">791 518 867</a></div>
+  <div class="contact-address">📍 Trawniki 6, 21-044 Trawniki</div>
+  <div class="contact-note">
+    Masz pomysł? Dzwoń lub pisz – chętnie dopasujemy ofertę do Twoich potrzeb.
+    Witamy i zapraszamy nad Wieprz! 🌊
+  </div>
+</section>
+
+<footer>
+  © 2026 zWIEPRZaj Wypożyczalnia Kajaków · Trawniki
+</footer>
+
+</body>
+</html>
