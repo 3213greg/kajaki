@@ -5,6 +5,32 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>zWIEPRZaj – Wypożyczalnia Kajaków Trawniki</title>
   
+  <!-- Firebase SDK -->
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+    import { getFirestore, doc, getDoc, onSnapshot } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+    
+    // Konfiguracja Firebase (publiczna - bezpieczna dla frontend)
+    const firebaseConfig = {
+      apiKey: "AIzaSyA0udpiu6ifM-WJwPZOhZlAq6hifPUL8Xw",
+      authDomain: "zwieprza-admin.firebaseapp.com",
+      projectId: "zwieprza-admin",
+      storageBucket: "zwieprza-admin.firebasestorage.app",
+      messagingSenderId: "284855337378",
+      appId: "1:284855337378:web:b889b773f27591dedab2fb"
+    };
+    
+    // Inicjalizacja Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    
+    // Udostępnij globalnie
+    window.firebaseDB = db;
+    window.firebaseDoc = doc;
+    window.firebaseGetDoc = getDoc;
+    window.firebaseOnSnapshot = onSnapshot;
+  </script>
+  
   <!-- Panel Admina - Style -->
   <style id="admin-styles">
     .admin-panel {
@@ -503,138 +529,193 @@
 </body>
 
 <script>
-// Ładowanie danych z panelu admina
-window.addEventListener('load', () => {
-    const savedData = localStorage.getItem('zwieprza-admin-data');
-    if (savedData) {
-        const data = JSON.parse(savedData);
-        
-        // Aktualizuj logo i nazwę firmy
-        if (data.companyName) {
-            const logoElement = document.querySelector('header .logo');
-            if (logoElement) {
-                logoElement.innerHTML = `z<span>${data.companyName.substring(1)}</span>`;
-            }
+// Ładowanie danych z Firebase
+async function loadDataFromFirebase() {
+    try {
+        if (!window.firebaseDB) {
+            console.log('Firebase nie jest jeszcze gotowy, czekam...');
+            return false;
         }
         
-        // Aktualizuj tagline
-        if (data.tagline) {
-            const taglineElement = document.querySelector('header .tagline');
-            if (taglineElement) {
-                taglineElement.textContent = data.tagline;
-            }
-        }
+        const docRef = window.firebaseDoc(window.firebaseDB, 'websites', 'zwieprza-data');
+        const docSnap = await window.firebaseGetDoc(docRef);
         
-        // Aktualizuj telefon
-        if (data.phone) {
-            const phoneLinks = document.querySelectorAll('a[href^="tel:"]');
-            phoneLinks.forEach(link => {
-                link.href = `tel:${data.phone}`;
-                if (link.textContent.match(/\d/)) {
-                    link.textContent = formatPhone(data.phone);
-                }
-            });
+        if (docSnap.exists()) {
+            const data = docSnap.data();
+            updatePageContent(data);
+            console.log('Dane załadowane z Firebase!');
+            return true;
+        } else {
+            console.log('Brak danych w Firebase');
+            return false;
         }
-        
-        // Aktualizuj tekst "O nas"
-        if (data.aboutText) {
-            const aboutElement = document.querySelector('.about-text');
-            if (aboutElement) {
-                aboutElement.innerHTML = data.aboutText.replace(/\n\n/g, '<br /><br />').replace(/\n/g, '<br />');
-            }
-        }
-        
-        // Aktualizuj adres
-        if (data.address) {
-            const addressElement = document.querySelector('.contact-address');
-            if (addressElement) {
-                addressElement.innerHTML = `📍 ${data.address}`;
-            }
-        }
-        
-        // Aktualizuj notatkę kontaktową
-        if (data.contactNote) {
-            const noteElement = document.querySelector('.contact-note');
-            if (noteElement) {
-                noteElement.innerHTML = data.contactNote.replace(/\n/g, '<br />');
-            }
-        }
-        
-        // Aktualizuj ofertę
-        if (data.offers && data.offers.length > 0) {
-            const offersContainer = document.querySelector('.offer-grid');
-            if (offersContainer) {
-                offersContainer.innerHTML = '';
-                data.offers.forEach(offer => {
-                    const div = document.createElement('div');
-                    div.className = 'offer-card';
-                    div.innerHTML = `
-                        <div class="icon">${offer.icon}</div>
-                        <h3>${offer.title}</h3>
-                        <p>${offer.desc}</p>
-                    `;
-                    offersContainer.appendChild(div);
-                });
-            }
-        }
-        
-        // Aktualizuj trasy
-        if (data.routes && data.routes.length > 0) {
-            const routesContainer = document.querySelector('.routes');
-            if (routesContainer) {
-                // Usuń stare trasy
-                const existingRoutes = routesContainer.querySelectorAll('.route-item');
-                existingRoutes.forEach(route => route.remove());
-                
-                // Dodaj nowe trasy
-                data.routes.forEach(route => {
-                    const div = document.createElement('div');
-                    div.className = 'route-item';
-                    div.innerHTML = `
-                        <div class="route-dot"></div>
-                        <div class="route-name">${route.name}</div>
-                        <div class="route-time">⏱ ${route.time}</div>
-                    `;
-                    routesContainer.insertBefore(div, routesContainer.querySelector('.routes-note'));
-                });
-            }
+    } catch (error) {
+        console.error('Błąd ładowania z Firebase:', error);
+        return false;
+    }
+}
+
+// Aktualizacja zawartości strony
+function updatePageContent(data) {
+    // Aktualizuj logo i nazwę firmy
+    if (data.companyName) {
+        const logoElement = document.querySelector('header .logo');
+        if (logoElement) {
+            logoElement.innerHTML = `z<span>${data.companyName.substring(1)}</span>`;
         }
     }
-});
+    
+    // Aktualizuj tagline
+    if (data.tagline) {
+        const taglineElement = document.querySelector('header .tagline');
+        if (taglineElement) {
+            taglineElement.textContent = data.tagline;
+        }
+    }
+    
+    // Aktualizuj telefon
+    if (data.phone) {
+        const phoneLinks = document.querySelectorAll('a[href^="tel:"]');
+        phoneLinks.forEach(link => {
+            link.href = `tel:${data.phone}`;
+            if (link.textContent.match(/\d/)) {
+                link.textContent = formatPhone(data.phone);
+            }
+        });
+    }
+    
+    // Aktualizuj tekst "O nas"
+    if (data.aboutText) {
+        const aboutElement = document.querySelector('.about-text');
+        if (aboutElement) {
+            aboutElement.innerHTML = data.aboutText.replace(/\n\n/g, '<br /><br />').replace(/\n/g, '<br />');
+        }
+    }
+    
+    // Aktualizuj adres
+    if (data.address) {
+        const addressElement = document.querySelector('.contact-address');
+        if (addressElement) {
+            addressElement.innerHTML = `📍 ${data.address}`;
+        }
+    }
+    
+    // Aktualizuj notatkę kontaktową
+    if (data.contactNote) {
+        const noteElement = document.querySelector('.contact-note');
+        if (noteElement) {
+            noteElement.innerHTML = data.contactNote.replace(/\n/g, '<br />');
+        }
+    }
+    
+    // Aktualizuj ofertę
+    if (data.offers && data.offers.length > 0) {
+        const offersContainer = document.querySelector('.offer-grid');
+        if (offersContainer) {
+            offersContainer.innerHTML = '';
+            data.offers.forEach(offer => {
+                const div = document.createElement('div');
+                div.className = 'offer-card';
+                div.innerHTML = `
+                    <div class="icon">${offer.icon}</div>
+                    <h3>${offer.title}</h3>
+                    <p>${offer.desc}</p>
+                `;
+                offersContainer.appendChild(div);
+            });
+        }
+    }
+    
+    // Aktualizuj trasy
+    if (data.routes && data.routes.length > 0) {
+        const routesContainer = document.querySelector('.routes');
+        if (routesContainer) {
+            // Usuń stare trasy
+            const existingRoutes = routesContainer.querySelectorAll('.route-item');
+            existingRoutes.forEach(route => route.remove());
+            
+            // Dodaj nowe trasy
+            data.routes.forEach(route => {
+                const div = document.createElement('div');
+                div.className = 'route-item';
+                div.innerHTML = `
+                    <div class="route-dot"></div>
+                    <div class="route-name">${route.name}</div>
+                    <div class="route-time">⏱ ${route.time}</div>
+                `;
+                routesContainer.insertBefore(div, routesContainer.querySelector('.routes-note'));
+            });
+        }
+    }
+}
 
 // Funkcja formatowania telefonu
 function formatPhone(phone) {
     return phone.replace(/(\d{3})(\d{3})(\d{3})/, '$1 $2 $3');
 }
 
-// Nasłuchuj zmian w localStorage (gdy zapisujesz w panelu admina)
-window.addEventListener('storage', function(e) {
-    if (e.key === 'zwieprza-admin-data') {
-        location.reload(); // Odśwież stronę gdy dane się zmienią
+// Ładowanie przy starcie strony
+window.addEventListener('load', async () => {
+    // Czekaj na Firebase
+    let attempts = 0;
+    while (!window.firebaseDB && attempts < 50) {
+        await new Promise(resolve => setTimeout(resolve, 100));
+        attempts++;
+    }
+    
+    // Spróbuj załadować z Firebase
+    const firebaseLoaded = await loadDataFromFirebase();
+    
+    // Jeśli Firebase nie działa, spróbuj localStorage jako backup
+    if (!firebaseLoaded) {
+        const savedData = localStorage.getItem('zwieprza-admin-data');
+        if (savedData) {
+            const data = JSON.parse(savedData);
+            updatePageContent(data);
+            console.log('Dane załadowane z localStorage (backup)');
+        }
+    }
+    
+    // Nasłuchuj zmian w czasie rzeczywistym (tylko jeśli Firebase działa)
+    if (window.firebaseDB && window.firebaseOnSnapshot) {
+        try {
+            const docRef = window.firebaseDoc(window.firebaseDB, 'websites', 'zwieprza-data');
+            window.firebaseOnSnapshot(docRef, (doc) => {
+                if (doc.exists()) {
+                    const data = doc.data();
+                    updatePageContent(data);
+                    console.log('Dane zaktualizowane w czasie rzeczywistym!');
+                }
+            });
+        } catch (error) {
+            console.error('Błąd nasłuchiwania zmian:', error);
+        }
     }
 });
 
-// Sprawdzaj zmiany co 2 sekundy (gdy admin panel jest w innej karcie)
+// Backup - sprawdzaj localStorage co 2 sekundy (gdyby Firebase nie działał)
 let lastDataHash = '';
 function checkForUpdates() {
     const savedData = localStorage.getItem('zwieprza-admin-data');
     if (savedData) {
-        const currentHash = btoa(savedData); // Prosty hash z base64
+        const currentHash = savedData.length.toString(); // Prosty hash z długości
         if (lastDataHash && lastDataHash !== currentHash) {
-            location.reload(); // Dane się zmieniły, odśwież stronę
+            const data = JSON.parse(savedData);
+            updatePageContent(data);
+            console.log('Dane zaktualizowane z localStorage');
         }
         lastDataHash = currentHash;
     }
 }
 
-// Sprawdzaj co 2 sekundy
-setInterval(checkForUpdates, 2000);
+// Sprawdzaj co 3 sekundy jako backup
+setInterval(checkForUpdates, 3000);
 
 // Ustaw początkowy hash
 window.addEventListener('load', () => {
     const savedData = localStorage.getItem('zwieprza-admin-data');
     if (savedData) {
-        lastDataHash = btoa(savedData);
+        lastDataHash = savedData.length.toString(); // Prosty hash z długości
     }
 });
 </script>
