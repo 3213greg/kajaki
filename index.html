@@ -4,23 +4,183 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>zWIEPRZaj – Wypożyczalnia Kajaków Trawniki</title>
+  
+  <!-- Panel Admina - Style -->
+  <style id="admin-styles">
+    .admin-panel {
+      position: fixed;
+      top: 0;
+      right: -400px;
+      width: 400px;
+      height: 100vh;
+      background: #fff;
+      box-shadow: -2px 0 10px rgba(0,0,0,0.3);
+      transition: right 0.3s ease;
+      z-index: 9999;
+      overflow-y: auto;
+    }
+    
+    .admin-panel.open {
+      right: 0;
+    }
+    
+    .admin-toggle {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: #0a4f3c;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 50px;
+      cursor: pointer;
+      z-index: 10000;
+      font-weight: bold;
+      font-size: 14px;
+    }
+    
+    .admin-toggle:hover {
+      background: #2ec47a;
+    }
+    
+    .admin-header {
+      background: #0a4f3c;
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+    
+    .admin-content {
+      padding: 20px;
+    }
+    
+    .admin-section {
+      margin-bottom: 30px;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 20px;
+    }
+    
+    .admin-section h3 {
+      color: #0a4f3c;
+      margin-bottom: 15px;
+      font-size: 1.1rem;
+    }
+    
+    .edit-field {
+      margin-bottom: 15px;
+    }
+    
+    .edit-field label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+      color: #333;
+      font-size: 0.9rem;
+    }
+    
+    .edit-field input,
+    .edit-field textarea {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 0.9rem;
+    }
+    
+    .edit-field textarea {
+      height: 80px;
+      resize: vertical;
+    }
+    
+    .admin-btn {
+      background: #2ec47a;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      margin: 5px 5px 5px 0;
+    }
+    
+    .admin-btn:hover {
+      background: #26a65b;
+    }
+    
+    .admin-btn.danger {
+      background: #dc3545;
+    }
+    
+    .admin-btn.danger:hover {
+      background: #c82333;
+    }
+    
+    .editable {
+      position: relative;
+    }
+    
+    .editable:hover {
+      outline: 2px dashed #2ec47a;
+      cursor: pointer;
+    }
+    
+    .edit-mode {
+      background: #fff3cd !important;
+      padding: 10px !important;
+      border: 2px solid #ffc107 !important;
+    }
+    
+    .save-notification {
+      position: fixed;
+      top: 80px;
+      right: 20px;
+      background: #28a745;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 4px;
+      z-index: 1002;
+      display: none;
+    }
+    
+    .admin-login {
+      height: 100vh;
+      overflow-y: auto;
+    }
+    
+    .admin-main {
+      height: 100vh;
+      overflow-y: auto;
+    }
+    
+    code {
+      background: #e9ecef;
+      padding: 2px 4px;
+      border-radius: 3px;
+      font-family: monospace;
+      font-size: 0.9em;
+    }
+  </style>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
-      font-family: 'Segoe UI', sans-serif;
-      color: #1a1a1a;
-      background: #f0f7f4;
+      font-family: 'Segoe UI', sans-serif !important;
+      color: #1a1a1a !important;
+      background: #f0f7f4 !important;
+      margin: 0 !important;
+      padding: 0 !important;
     }
 
     /* HERO */
     header {
-      background: linear-gradient(135deg, #0a4f3c 0%, #1a8a5a 60%, #2ec47a 100%);
-      color: white;
-      text-align: center;
-      padding: 80px 20px 60px;
-      position: relative;
-      overflow: hidden;
+      background: linear-gradient(135deg, #0a4f3c 0%, #1a8a5a 60%, #2ec47a 100%) !important;
+      color: white !important;
+      text-align: center !important;
+      padding: 80px 20px 60px !important;
+      position: relative !important;
+      overflow: hidden !important;
+      display: block !important;
+      visibility: visible !important;
     }
     header::before {
       content: '';
@@ -109,13 +269,19 @@
     .offer-card p { font-size: 0.9rem; color: #555; line-height: 1.5; }
 
     /* TRASY */
-    .routes { background: white; border-radius: 16px; padding: 30px; box-shadow: 0 2px 12px rgba(0,0,0,0.07); }
+    .routes { 
+      background: white; 
+      border-radius: 16px; 
+      padding: 30px; 
+      box-shadow: 0 2px 12px rgba(0,0,0,0.07); 
+    }
     .route-item {
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       gap: 16px;
       padding: 14px 0;
       border-bottom: 1px solid #e8f5ee;
+      min-height: 50px;
     }
     .route-item:last-child { border-bottom: none; }
     .route-dot {
@@ -123,9 +289,28 @@
       background: #2ec47a;
       border-radius: 50%;
       flex-shrink: 0;
+      margin-top: 4px;
     }
-    .route-name { font-weight: 700; color: #0a4f3c; font-size: 1rem; }
-    .route-time { margin-left: auto; font-size: 0.88rem; color: #777; white-space: nowrap; }
+    .route-name { 
+      font-weight: 700; 
+      color: #0a4f3c; 
+      font-size: 1rem; 
+      flex: 1;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      hyphens: auto;
+      line-height: 1.3;
+      max-width: calc(100% - 120px);
+    }
+    .route-time { 
+      margin-left: auto; 
+      font-size: 0.88rem; 
+      color: #777; 
+      white-space: nowrap;
+      flex-shrink: 0;
+      min-width: 100px;
+      text-align: right;
+    }
 
     .routes-note {
       margin-top: 20px;
@@ -164,6 +349,34 @@
       padding: 20px;
       font-size: 0.82rem;
       color: #888;
+    }
+
+    /* Przycisk do panelu admina */
+    .admin-access {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: rgba(10, 79, 60, 0.8);
+      color: white;
+      padding: 12px 16px;
+      border-radius: 50px;
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 600;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      transition: all 0.3s ease;
+      backdrop-filter: blur(10px);
+      z-index: 1000;
+    }
+
+    .admin-access:hover {
+      background: rgba(46, 196, 122, 0.9);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(0,0,0,0.3);
+    }
+
+    .admin-access:active {
+      transform: translateY(0);
     }
 
     @media (max-width: 600px) {
@@ -282,5 +495,148 @@
   © 2026 zWIEPRZaj Wypożyczalnia Kajaków · Trawniki
 </footer>
 
+<!-- Przycisk do panelu admina -->
+<a href="zwieprza-admin-panel.html" class="admin-access" title="Panel administracyjny">
+  🛠️ Admin
+</a>
+
 </body>
+
+<script>
+// Ładowanie danych z panelu admina
+window.addEventListener('load', () => {
+    const savedData = localStorage.getItem('zwieprza-admin-data');
+    if (savedData) {
+        const data = JSON.parse(savedData);
+        
+        // Aktualizuj logo i nazwę firmy
+        if (data.companyName) {
+            const logoElement = document.querySelector('header .logo');
+            if (logoElement) {
+                logoElement.innerHTML = `z<span>${data.companyName.substring(1)}</span>`;
+            }
+        }
+        
+        // Aktualizuj tagline
+        if (data.tagline) {
+            const taglineElement = document.querySelector('header .tagline');
+            if (taglineElement) {
+                taglineElement.textContent = data.tagline;
+            }
+        }
+        
+        // Aktualizuj telefon
+        if (data.phone) {
+            const phoneLinks = document.querySelectorAll('a[href^="tel:"]');
+            phoneLinks.forEach(link => {
+                link.href = `tel:${data.phone}`;
+                if (link.textContent.match(/\d/)) {
+                    link.textContent = formatPhone(data.phone);
+                }
+            });
+        }
+        
+        // Aktualizuj tekst "O nas"
+        if (data.aboutText) {
+            const aboutElement = document.querySelector('.about-text');
+            if (aboutElement) {
+                aboutElement.innerHTML = data.aboutText.replace(/\n\n/g, '<br /><br />').replace(/\n/g, '<br />');
+            }
+        }
+        
+        // Aktualizuj adres
+        if (data.address) {
+            const addressElement = document.querySelector('.contact-address');
+            if (addressElement) {
+                addressElement.innerHTML = `📍 ${data.address}`;
+            }
+        }
+        
+        // Aktualizuj notatkę kontaktową
+        if (data.contactNote) {
+            const noteElement = document.querySelector('.contact-note');
+            if (noteElement) {
+                noteElement.innerHTML = data.contactNote.replace(/\n/g, '<br />');
+            }
+        }
+        
+        // Aktualizuj ofertę
+        if (data.offers && data.offers.length > 0) {
+            const offersContainer = document.querySelector('.offer-grid');
+            if (offersContainer) {
+                offersContainer.innerHTML = '';
+                data.offers.forEach(offer => {
+                    const div = document.createElement('div');
+                    div.className = 'offer-card';
+                    div.innerHTML = `
+                        <div class="icon">${offer.icon}</div>
+                        <h3>${offer.title}</h3>
+                        <p>${offer.desc}</p>
+                    `;
+                    offersContainer.appendChild(div);
+                });
+            }
+        }
+        
+        // Aktualizuj trasy
+        if (data.routes && data.routes.length > 0) {
+            const routesContainer = document.querySelector('.routes');
+            if (routesContainer) {
+                // Usuń stare trasy
+                const existingRoutes = routesContainer.querySelectorAll('.route-item');
+                existingRoutes.forEach(route => route.remove());
+                
+                // Dodaj nowe trasy
+                data.routes.forEach(route => {
+                    const div = document.createElement('div');
+                    div.className = 'route-item';
+                    div.innerHTML = `
+                        <div class="route-dot"></div>
+                        <div class="route-name">${route.name}</div>
+                        <div class="route-time">⏱ ${route.time}</div>
+                    `;
+                    routesContainer.insertBefore(div, routesContainer.querySelector('.routes-note'));
+                });
+            }
+        }
+    }
+});
+
+// Funkcja formatowania telefonu
+function formatPhone(phone) {
+    return phone.replace(/(\d{3})(\d{3})(\d{3})/, '$1 $2 $3');
+}
+
+// Nasłuchuj zmian w localStorage (gdy zapisujesz w panelu admina)
+window.addEventListener('storage', function(e) {
+    if (e.key === 'zwieprza-admin-data') {
+        location.reload(); // Odśwież stronę gdy dane się zmienią
+    }
+});
+
+// Sprawdzaj zmiany co 2 sekundy (gdy admin panel jest w innej karcie)
+let lastDataHash = '';
+function checkForUpdates() {
+    const savedData = localStorage.getItem('zwieprza-admin-data');
+    if (savedData) {
+        const currentHash = btoa(savedData); // Prosty hash z base64
+        if (lastDataHash && lastDataHash !== currentHash) {
+            location.reload(); // Dane się zmieniły, odśwież stronę
+        }
+        lastDataHash = currentHash;
+    }
+}
+
+// Sprawdzaj co 2 sekundy
+setInterval(checkForUpdates, 2000);
+
+// Ustaw początkowy hash
+window.addEventListener('load', () => {
+    const savedData = localStorage.getItem('zwieprza-admin-data');
+    if (savedData) {
+        lastDataHash = btoa(savedData);
+    }
+});
+</script>
+
 </html>
