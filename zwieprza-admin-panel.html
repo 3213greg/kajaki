@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>zWIEPRZaj - Panel Admina</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #f0f7f4;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #0a4f3c 0%, #2ec47a 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .login-section {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        
+        .admin-section {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+            display: none;
+        }
+        
+        .admin-section.active {
+            display: block;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #0a4f3c;
+        }
+        
+        input, textarea, select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: #2ec47a;
+        }
+        
+        textarea {
+            height: 120px;
+            resize: vertical;
+        }
+        
+        .btn {
+            background: #2ec47a;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s;
+            margin: 5px 5px 5px 0;
+        }
+        
+        .btn:hover {
+            background: #26a65b;
+            transform: translateY(-2px);
+        }
+        
+        .btn-danger {
+            background: #dc3545;
+        }
+        
+        .btn-danger:hover {
+            background: #c82333;
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+        }
+        
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+        
+        .btn-full {
+            width: 100%;
+        }
+        
+        .error {
+            color: #dc3545;
+            margin-top: 10px;
+            text-align: center;
+            padding: 10px;
+            background: #f8d7da;
+            border-radius: 4px;
+            display: none;
+        }
+        
+        .success {
+            color: #155724;
+            margin-top: 10px;
+            text-align: center;
+            padding: 10px;
+            background: #d4edda;
+            border-radius: 4px;
+            display: none;
+        }
+        
+        .nav-tabs {
+            display: flex;
+            margin-bottom: 30px;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .nav-tab {
+            flex: 1;
+            padding: 15px 20px;
+            background: #f8f9fa;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            color: #666;
+            transition: all 0.3s;
+        }
+        
+        .nav-tab.active {
+            background: #2ec47a;
+            color: white;
+        }
+        
+        .nav-tab:hover {
+            background: #e9ecef;
+        }
+        
+        .nav-tab.active:hover {
+            background: #26a65b;
+        }
+        
+        .item-editor {
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+            background: #f8f9fa;
+        }
+        
+        .item-controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .item-controls input {
+            margin-bottom: 0;
+        }
+        
+        .logout-section {
+            text-align: center;
+            margin-top: 30px;
+        }
+        
+        .preview-link {
+            display: inline-block;
+            margin-top: 20px;
+            color: #2ec47a;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        
+        .preview-link:hover {
+            text-decoration: underline;
+        }
+        
+        .info-box {
+            background: #e8f5ee;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #2ec47a;
+        }
+        
+        .info-box strong {
+            color: #0a4f3c;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>🛠️ Panel Admina zWIEPRZaj</h1>
+            <p>Zarządzaj zawartością wypożyczalni kajaków</p>
+        </div>
+
+        <!-- Login Section -->
+        <div class="login-section" id="loginSection">
+            <h2 style="text-align: center; color: #0a4f3c; margin-bottom: 30px;">🔐 Logowanie</h2>
+            
+            <div class="info-box">
+                <strong>💡 Dane testowe:</strong><br>
+                Login: <code>admin</code><br>
+                Hasło: <code>zwieprza2024</code>
+            </div>
+            
+            <form id="loginForm">
+                <div class="form-group">
+                    <label>Nazwa użytkownika:</label>
+                    <input type="text" id="username" placeholder="admin" required>
+                </div>
+                <div class="form-group">
+                    <label>Hasło:</label>
+                    <input type="password" id="password" placeholder="••••••••" required>
+                </div>
+                <button type="submit" class="btn btn-full">🔓 Zaloguj się</button>
+                <div class="error" id="loginError"></div>
+            </form>
+            
+            <a href="zwieprza j.html" class="preview-link">👁️ Zobacz stronę główną</a>
+        </div>
+
+        <!-- Admin Panel -->
+        <div id="adminPanel">
+            <!-- Navigation Tabs -->
+            <div class="nav-tabs">
+                <button class="nav-tab active" onclick="showTab('basic')">📝 Podstawowe</button>
+                <button class="nav-tab" onclick="showTab('offers')">🛶 Oferta</button>
+                <button class="nav-tab" onclick="showTab('routes')">🗺️ Trasy</button>
+                <button class="nav-tab" onclick="showTab('contact')">📞 Kontakt</button>
+            </div>
+
+            <!-- Basic Info Tab -->
+            <div class="admin-section active" id="basicTab">
+                <h3>📝 Podstawowe informacje</h3>
+                
+                <div class="form-group">
+                    <label>Nazwa firmy:</label>
+                    <input type="text" id="companyName" placeholder="zWIEPRZAJ">
+                </div>
+                
+                <div class="form-group">
+                    <label>Tagline (opis pod logo):</label>
+                    <input type="text" id="tagline" placeholder="Wypożyczalnia Kajaków · Trawniki nad Wieprzem">
+                </div>
+                
+                <div class="form-group">
+                    <label>Numer telefonu:</label>
+                    <input type="text" id="phone" placeholder="791518867">
+                </div>
+                
+                <div class="form-group">
+                    <label>Tekst "O nas":</label>
+                    <textarea id="aboutText" placeholder="Opisz swoją firmę..."></textarea>
+                </div>
+                
+                <button class="btn" onclick="saveBasicInfo()">💾 Zapisz podstawowe info</button>
+            </div>
+
+            <!-- Offers Tab -->
+            <div class="admin-section" id="offersTab">
+                <h3>🛶 Zarządzanie ofertą</h3>
+                <div id="offersContainer"></div>
+                <button class="btn" onclick="addOffer()">➕ Dodaj nową usługę</button>
+                <button class="btn btn-secondary" onclick="saveOffers()">💾 Zapisz ofertę</button>
+            </div>
+
+            <!-- Routes Tab -->
+            <div class="admin-section" id="routesTab">
+                <h3>🗺️ Zarządzanie trasami</h3>
+                <div id="routesContainer"></div>
+                <button class="btn" onclick="addRoute()">➕ Dodaj nową trasę</button>
+                <button class="btn btn-secondary" onclick="saveRoutes()">💾 Zapisz trasy</button>
+            </div>
+
+            <!-- Contact Tab -->
+            <div class="admin-section" id="contactTab">
+                <h3>📞 Informacje kontaktowe</h3>
+                
+                <div class="form-group">
+                    <label>Adres:</label>
+                    <input type="text" id="address" placeholder="Trawniki 6, 21-044 Trawniki">
+                </div>
+                
+                <div class="form-group">
+                    <label>Notatka kontaktowa:</label>
+                    <textarea id="contactNote" placeholder="Zachęta dla klientów..."></textarea>
+                </div>
+                
+                <button class="btn" onclick="saveContact()">💾 Zapisz kontakt</button>
+            </div>
+
+            <!-- Actions -->
+            <div class="logout-section">
+                <button class="btn btn-secondary" onclick="exportData()">📥 Eksportuj dane</button>
+                <button class="btn btn-danger" onclick="resetData()">🔄 Reset do domyślnych</button>
+                <button class="btn btn-danger" onclick="logout()">🚪 Wyloguj</button>
+                
+                <a href="zwieprza j.html" class="preview-link">👁️ Zobacz stronę główną</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Dane do edycji
+        let siteData = {
+            companyName: "zWIEPRZAJ",
+            tagline: "Wypożyczalnia Kajaków · Trawniki nad Wieprzem",
+            phone: "791518867",
+            aboutText: `Nad Wieprzem się wychowaliśmy – w wodzie i na wodzie spędziliśmy całe dzieciństwo i lata nastoletnie.
+Rzekę znamy świetnie, ale niezmiennie urzeka nas swoim pięknem i dzikością.
+Jesteśmy grupą zajawkowiczów, których łączy pasja do kajaków.
+
+Zapraszamy do naszej wypożyczalni w Trawnikach (Trawniki 6).
+Oferujemy indywidualne podejście do każdego klienta – masz pomysł? Dzwoń!`,
+            address: "Trawniki 6, 21-044 Trawniki",
+            contactNote: `Masz pomysł? Dzwoń lub pisz – chętnie dopasujemy ofertę do Twoich potrzeb.
+Witamy i zapraszamy nad Wieprz! 🌊`,
+            offers: [
+                { icon: "🛶", title: "Kajak 2-osobowy", desc: "Z możliwością dostawki siedziska dla dziecka" },
+                { icon: "🚣", title: "Kajak 1-osobowy", desc: "Dla tych, którzy lubią płynąć własnym tempem" },
+                { icon: "🚐", title: "Transport", desc: "Dowóz kajaków na miejsce startu + odbiór po spływie. Pomoc w transporcie uczestników." },
+                { icon: "🦺", title: "Sprzęt asekuracyjny", desc: "Kamizelki asekuracyjne (kapoki) dla każdego uczestnika" },
+                { icon: "📱", title: "Etui na telefon", desc: "Ochronne etui wodoodporne – telefon bezpieczny na wodzie" },
+                { icon: "🛢️", title: "Beczki wodoszczelne", desc: "Do bezpiecznego spakowania wartościowych rzeczy" }
+            ],
+            routes: [
+                { name: "Dobryniów → Trawniki", time: "4–5 godz." },
+                { name: "Trawniki → Pełczyn", time: "1–1,5 godz." },
+                { name: "Trawniki → Siostrzytów", time: "2–3 godz." },
+                { name: "Trawniki → Jaszczów", time: "4–5 godz." },
+                { name: "Dobryniów → Oleśniki → Trawniki → Siostrzytów → Jaszczów", time: "trasa główna" }
+            ]
+        };
+
+        // Login system
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const errorDiv = document.getElementById('loginError');
+            
+            if (username === 'admin' && password === 'zwieprza2024') {
+                document.getElementById('loginSection').style.display = 'none';
+                document.getElementById('adminPanel').style.display = 'block';
+                loadData();
+                showSuccess('Zalogowano pomyślnie!');
+            } else {
+                errorDiv.textContent = '❌ Nieprawidłowe dane logowania!';
+                errorDiv.style.display = 'block';
+            }
+        });
+
+        // Tab navigation
+        function showTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.admin-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Show selected tab
+            document.getElementById(tabName + 'Tab').classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // Load data into forms
+        function loadData() {
+            document.getElementById('companyName').value = siteData.companyName;
+            document.getElementById('tagline').value = siteData.tagline;
+            document.getElementById('phone').value = siteData.phone;
+            document.getElementById('aboutText').value = siteData.aboutText;
+            document.getElementById('address').value = siteData.address;
+            document.getElementById('contactNote').value = siteData.contactNote;
+            
+            generateOffersEditor();
+            generateRoutesEditor();
+        }
+
+        // Generate offers editor
+        function generateOffersEditor() {
+            const container = document.getElementById('offersContainer');
+            container.innerHTML = '';
+            
+            siteData.offers.forEach((offer, index) => {
+                const div = document.createElement('div');
+                div.className = 'item-editor';
+                div.innerHTML = `
+                    <div class="item-controls">
+                        <input type="text" placeholder="Ikona" value="${offer.icon}" style="width: 80px;" onchange="updateOffer(${index}, 'icon', this.value)">
+                        <input type="text" placeholder="Tytuł" value="${offer.title}" style="flex: 1;" onchange="updateOffer(${index}, 'title', this.value)">
+                        <button class="btn btn-danger" onclick="removeOffer(${index})">🗑️ Usuń</button>
+                    </div>
+                    <textarea placeholder="Opis usługi" onchange="updateOffer(${index}, 'desc', this.value)">${offer.desc}</textarea>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        // Generate routes editor
+        function generateRoutesEditor() {
+            const container = document.getElementById('routesContainer');
+            container.innerHTML = '';
+            
+            siteData.routes.forEach((route, index) => {
+                const div = document.createElement('div');
+                div.className = 'item-editor';
+                div.innerHTML = `
+                    <div class="item-controls">
+                        <input type="text" placeholder="Nazwa trasy" value="${route.name}" style="flex: 1;" onchange="updateRoute(${index}, 'name', this.value)">
+                        <input type="text" placeholder="Czas" value="${route.time}" style="width: 150px;" onchange="updateRoute(${index}, 'time', this.value)">
+                        <button class="btn btn-danger" onclick="removeRoute(${index})">🗑️ Usuń</button>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        // Update functions
+        function updateOffer(index, field, value) {
+            siteData.offers[index][field] = value;
+        }
+
+        function updateRoute(index, field, value) {
+            siteData.routes[index][field] = value;
+        }
+
+        function addOffer() {
+            siteData.offers.push({ icon: "🆕", title: "Nowa usługa", desc: "Opis nowej usługi" });
+            generateOffersEditor();
+        }
+
+        function removeOffer(index) {
+            if (confirm('Czy na pewno usunąć tę usługę?')) {
+                siteData.offers.splice(index, 1);
+                generateOffersEditor();
+            }
+        }
+
+        function addRoute() {
+            siteData.routes.push({ name: "Nowa trasa", time: "2-3 godz." });
+            generateRoutesEditor();
+        }
+
+        function removeRoute(index) {
+            if (confirm('Czy na pewno usunąć tę trasę?')) {
+                siteData.routes.splice(index, 1);
+                generateRoutesEditor();
+            }
+        }
+
+        // Save functions
+        function saveBasicInfo() {
+            siteData.companyName = document.getElementById('companyName').value;
+            siteData.tagline = document.getElementById('tagline').value;
+            siteData.phone = document.getElementById('phone').value;
+            siteData.aboutText = document.getElementById('aboutText').value;
+            
+            localStorage.setItem('zwieprza-admin-data', JSON.stringify(siteData));
+            showSuccess('Podstawowe informacje zostały zapisane!');
+        }
+
+        function saveOffers() {
+            localStorage.setItem('zwieprza-admin-data', JSON.stringify(siteData));
+            showSuccess('Oferta została zapisana!');
+        }
+
+        function saveRoutes() {
+            localStorage.setItem('zwieprza-admin-data', JSON.stringify(siteData));
+            showSuccess('Trasy zostały zapisane!');
+        }
+
+        function saveContact() {
+            siteData.address = document.getElementById('address').value;
+            siteData.contactNote = document.getElementById('contactNote').value;
+            
+            localStorage.setItem('zwieprza-admin-data', JSON.stringify(siteData));
+            showSuccess('Informacje kontaktowe zostały zapisane!');
+        }
+
+        // Utility functions
+        function showSuccess(message) {
+            alert('✅ ' + message);
+        }
+
+        function exportData() {
+            const dataStr = JSON.stringify(siteData, null, 2);
+            const dataBlob = new Blob([dataStr], {type: 'application/json'});
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'zwieprza-data.json';
+            link.click();
+            showSuccess('Dane zostały wyeksportowane!');
+        }
+
+        function resetData() {
+            if (confirm('Czy na pewno przywrócić domyślne ustawienia? Wszystkie zmiany zostaną utracone!')) {
+                localStorage.removeItem('zwieprza-admin-data');
+                location.reload();
+            }
+        }
+
+        function logout() {
+            if (confirm('Czy na pewno chcesz się wylogować?')) {
+                document.getElementById('loginSection').style.display = 'block';
+                document.getElementById('adminPanel').style.display = 'none';
+                document.getElementById('loginForm').reset();
+            }
+        }
+
+        // Load saved data on page load
+        window.addEventListener('load', () => {
+            const savedData = localStorage.getItem('zwieprza-admin-data');
+            if (savedData) {
+                siteData = JSON.parse(savedData);
+            }
+        });
+
+        // Initially hide admin panel
+        document.getElementById('adminPanel').style.display = 'none';
+    </script>
+</body>
+</html>
